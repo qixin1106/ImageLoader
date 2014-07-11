@@ -25,7 +25,7 @@
 @ block:回调,传入参数img为异步取回的图片
 
 
-
+```iOS
 [ImageLoader getImageWithURL:[_imgURLs objectAtIndex:i]
 
                  placeholder:[UIImage imageNamed:@"test.png"]
@@ -35,5 +35,5 @@
                           myImgView.image = img;
 
                        }];
-
+```
  
