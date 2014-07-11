@@ -27,13 +27,9 @@
 
 ```iOS
 [ImageLoader getImageWithURL:[_imgURLs objectAtIndex:i]
-
                  placeholder:[UIImage imageNamed:@"test.png"]
-
                        block:^(UIImage *img) {
-
                           myImgView.image = img;
-
                        }];
 ```
  
