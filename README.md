@@ -26,13 +26,13 @@
 @ block:回调,传入参数img为异步取回的图片
 
 
- [ImageLoader getImageWithURL:[_imgURLs objectAtIndex:i]
+[ImageLoader getImageWithURL:[_imgURLs objectAtIndex:i]
 
-                  placeholder:[UIImage imageNamed:@"test.png"]
+                 placeholder:[UIImage imageNamed:@"test.png"]
 
-                        block:^(UIImage *img) {
+                       block:^(UIImage *img) {
 
-                           myImgView.image = img;
+                          myImgView.image = img;
 
-                        }];
+                       }];
  
