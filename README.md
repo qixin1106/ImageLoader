@@ -12,7 +12,6 @@
 
  *如需要可以修改"ILCachePath"路径
 
-
  *只支持ARC项目,如非ARC项目需要添加 -fobjc-arc 参数
  
  
@@ -26,9 +25,15 @@
 @ block:回调,传入参数img为异步取回的图片
 
 
+
 [ImageLoader getImageWithURL:[_imgURLs objectAtIndex:i]
+
                  placeholder:[UIImage imageNamed:@"test.png"]
+
                        block:^(UIImage *img) {
+
                           myImgView.image = img;
+
                        }];
+
  
