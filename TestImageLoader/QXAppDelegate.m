@@ -16,14 +16,30 @@
 
 - (void)loadImage:(UIButton*)sender
 {
+    /*
+     //Test Url
+     NSString *testUrl = @"http://image.zcool.com.cn/img2/27/20/m_1317198401426.jpg";
+     //request image
+     [ImageLoader getImageWithURL:testUrl
+     placeholder:[UIImage imageNamed:@"placeholder.jpg"]
+     block:^(UIImage *img) {
+     self.imageView.image = img;
+     }];
+     */
+    
+    
     //Test Url
     NSString *testUrl = @"http://image.zcool.com.cn/img2/27/20/m_1317198401426.jpg";
+    //NSString *testErrorUrl = @"http://image.zcool.com.cn/img2/27/20/m_1317198401426fuck.jpg";
+
     //request image
+    self.imageView.image = [UIImage imageNamed:@"placeholder.jpg"];
     [ImageLoader getImageWithURL:testUrl
-                     placeholder:[UIImage imageNamed:@"placeholder.jpg"]
-                           block:^(UIImage *img) {
-                               self.imageView.image = img;
-                           }];
+                      loadFinish:^(UIImage *img) {
+                          self.imageView.image = img;
+                      }loadFailure:^{
+                          //error handle
+                      }];
 }
 
 - (void)clearCacheImage:(UIButton*)sender
@@ -37,7 +53,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-
+    
     //Load image button
     UIButton *loadButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [loadButton setBackgroundColor:[UIColor blueColor]];
@@ -45,7 +61,7 @@
     [loadButton setTitle:@"LoadImage" forState:UIControlStateNormal];
     [loadButton addTarget:self action:@selector(loadImage:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:loadButton];
-
+    
     //clear caches button
     UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [clearButton setBackgroundColor:[UIColor redColor]];
@@ -53,13 +69,13 @@
     [clearButton setTitle:@"ClearImage" forState:UIControlStateNormal];
     [clearButton addTarget:self action:@selector(clearCacheImage:) forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:clearButton];
-
+    
     //show imageview
     self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 50, 300, 300)];
     self.imageView.backgroundColor = [UIColor lightGrayColor];
     [self.window addSubview:self.imageView];
-
-
+    
+    
     return YES;
 }
 
