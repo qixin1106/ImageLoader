@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		994D1E281974277D001776B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 994D1E271974277D001776B8 /* README.md */; };
 		D2284133196FD975005B6143 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2284132196FD975005B6143 /* Foundation.framework */; };
 		D2284135196FD975005B6143 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2284134196FD975005B6143 /* CoreGraphics.framework */; };
 		D2284137196FD975005B6143 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2284136196FD975005B6143 /* UIKit.framework */; };
@@ -34,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		994D1E271974277D001776B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		D228412F196FD975005B6143 /* TestImageLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestImageLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2284132196FD975005B6143 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2284134196FD975005B6143 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -82,6 +84,7 @@
 		D2284126196FD975005B6143 = {
 			isa = PBXGroup;
 			children = (
+				994D1E271974277D001776B8 /* README.md */,
 				D2284138196FD975005B6143 /* TestImageLoader */,
 				D2284151196FD975005B6143 /* TestImageLoaderTests */,
 				D2284131196FD975005B6143 /* Frameworks */,
@@ -238,6 +241,7 @@
 			files = (
 				D228413D196FD975005B6143 /* InfoPlist.strings in Resources */,
 				D28956B7196FDBE200863A7D /* placeholder.jpg in Resources */,
+				994D1E281974277D001776B8 /* README.md in Resources */,
 				D2284145196FD975005B6143 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
