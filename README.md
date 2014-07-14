@@ -1,3 +1,16 @@
+简介
+============
+实现一个精简的异步加载图片工具,绝对小巧..^_^
+
+
+更新 1.2
+============
+1.增加判断url是否是NSString类型否则会Crash.
+
+2.增加新异步加载方法,可通过block回调成功和失败.
+
+
+
 更新 1.1
 ============
 1.增加请求数据是否是一个图片判断.
@@ -14,22 +27,4 @@
 
  *只支持ARC项目,如非ARC项目需要添加 -fobjc-arc 参数
  
- 
- 
- 示例
-===========
-@ getImageWithURL:你的url字符串
 
-@ placeholder:你的临时图片
-
-@ block:回调,传入参数img为异步取回的图片
-
-
-```iOS
-[ImageLoader getImageWithURL:[_imgURLs objectAtIndex:i]
-                 placeholder:[UIImage imageNamed:@"test.png"]
-                       block:^(UIImage *img) {
-                          myImgView.image = img;
-                       }];
-```
- 
