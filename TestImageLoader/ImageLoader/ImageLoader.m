@@ -75,34 +75,58 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-#pragma mark - 异步加载图片
-+ (void)getImageWithURL:(NSString*)url placeholder:(UIImage*)placeholder block:(ImgCallBack)blk;
+#pragma mark - 判断url是否合法
++ (BOOL)isValidUrl:(NSString*)url
 {
-    if (!url || [url isEqualToString:@""] || [[url pathExtension] isEqualToString:@""])
+    if (![url isKindOfClass:[NSString class]])
+    {
+        printf("[ImageLoader]错误:Url不是NSString类型\n");
+        return NO;
+    }
+    if (!url)
+    {
+        printf("[ImageLoader]错误:Url=nil\n");
+        return NO;
+    }
+    if ([url isEqualToString:@""])
+    {
+        printf("[ImageLoader]错误:Url为空\n");
+        return NO;
+    }
+    if ([[url pathExtension] isEqualToString:@""])
+    {
+        printf("[ImageLoader]错误:Url扩展名为空,可能不是图片链接\n");
+        return NO;
+    }
+    return YES;
+}
+
+
+
+
+
+
+
+
+
+#pragma mark - 异步加载图片1.1
++ (void)getImageWithURL:(NSString*)url
+            placeholder:(UIImage*)placeholder
+                  block:(ImgCallBack)blk;
+{
+    if (![ImageLoader isValidUrl:url])
     {
         if (blk)
         {
-            printf("\nurl不能为nil或者空字符串或没有扩展名\n");
             blk(placeholder);
         }
         return;
     }
-
+    
     //TODO: 转码UTF-8
     url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-
+    
+    
     if (![[NSFileManager defaultManager] fileExistsAtPath:ILCachePath])
     {
         [[NSFileManager defaultManager] createDirectoryAtPath:ILCachePath
@@ -110,9 +134,9 @@
                                                    attributes:nil
                                                         error:nil];
     }
-
-
-
+    
+    
+    
     NSString *imagePath = [ImageLoader getImageFileLocalPath:url];
     if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath])
     {
@@ -120,7 +144,7 @@
         {
             @autoreleasepool
             {
-                printf("\nload Image %s\n",[imagePath UTF8String]);
+                printf("\nload cache Image %s\n",[imagePath UTF8String]);
                 NSData *imgData = [NSData dataWithContentsOfFile:imagePath
                                                          options:NSDataReadingMapped
                                                            error:nil];
@@ -132,10 +156,10 @@
     {
         if (blk)
         {
-            printf("\nload placeholder %s\n",[imagePath UTF8String]);
+            printf("\nload placeholder need download image%s\n",[imagePath UTF8String]);
             blk(placeholder);
         }
-
+        
         dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(queue, ^{
             @autoreleasepool
@@ -149,20 +173,120 @@
                                                                     error:nil];
                 if (imgData && [ImageLoader isImageWithData:imgData])
                 {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if ([imgData writeToFile:imagePath atomically:YES])
-                        {
-                            printf("\nsave Image %s\n",[imagePath UTF8String]);
+                    if ([imgData writeToFile:imagePath atomically:YES])
+                    {
+                        printf("\nsave Image %s\n",[imagePath UTF8String]);
+                        NSData *data = [NSData dataWithContentsOfFile:imagePath
+                                                              options:NSDataReadingMapped
+                                                                error:nil];
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             if (blk)
                             {
-                                @autoreleasepool
-                                {
-                                    NSData *data = [NSData dataWithContentsOfFile:imagePath
-                                                                          options:NSDataReadingMapped
-                                                                            error:nil];
-                                    blk([UIImage imageWithData:data]);
-                                }
+                                blk([UIImage imageWithData:data]);
                             }
+                        });
+                    }
+                }
+            }
+        });
+    }
+}
+
+
+
+
+
+
+
+#pragma mark - 常规加载1.2
++ (void)getImageWithURL:(NSString*)url
+             loadFinish:(LoadFinish)finish
+            loadFailure:(LoadFailure)failure;
+{
+    if (![ImageLoader isValidUrl:url])
+    {
+        if (failure)
+        {
+            printf("\nbad url\n");
+            failure();
+        }
+        return;
+    }
+    
+    //TODO: 转码UTF-8
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:ILCachePath])
+    {
+        [[NSFileManager defaultManager] createDirectoryAtPath:ILCachePath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
+    }
+    
+    
+    
+    NSString *imagePath = [ImageLoader getImageFileLocalPath:url];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath])
+    {
+        if (finish)
+        {
+            @autoreleasepool
+            {
+                printf("\nload cache Image %s\n",[imagePath UTF8String]);
+                NSData *imgData = [NSData dataWithContentsOfFile:imagePath
+                                                         options:NSDataReadingMapped
+                                                           error:nil];
+                finish([UIImage imageWithData:imgData]);
+            }
+        }
+    }
+    else
+    {
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(queue, ^{
+            @autoreleasepool
+            {
+                NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]
+                                                         cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                     timeoutInterval:ILTimeOut];
+                NSData *imgData = [NSURLConnection sendSynchronousRequest:request
+                                                        returningResponse:nil
+                                                                    error:nil];
+                if (imgData && [ImageLoader isImageWithData:imgData])
+                {
+                    if ([imgData writeToFile:imagePath atomically:YES])
+                    {
+                        printf("\nsave Image %s\n",[imagePath UTF8String]);
+                        NSData *data = [NSData dataWithContentsOfFile:imagePath
+                                                              options:NSDataReadingMapped
+                                                                error:nil];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            if (finish)
+                            {
+                                finish([UIImage imageWithData:data]);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            if (failure)
+                            {
+                                printf("\nsave Image Error\n");
+                                failure();
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (failure)
+                        {
+                            printf("\ndownLoad error or data is not a image\n");
+                            failure();
                         }
                     });
                 }
@@ -170,6 +294,7 @@
         });
     }
 }
+
 
 
 

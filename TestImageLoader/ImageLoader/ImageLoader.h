@@ -5,42 +5,53 @@
 //  Copyright (c) 2013年 亓鑫. All rights reserved.
 //
 
-/*
- *该方法会自动建立文件夹../Temp/ILImgCache/
- *如需要可以修改"ILCachePath"路径
- *只支持ARC项目,如非ARC项目需要添加 -fobjc-arc 参数
-
- [ImageLoader getImageWithURL:yourUrlString
-                  placeholder:[UIImage imageNamed:@"test.png"]
-                        block:^(UIImage *img) {
-                            myImgView.image = img;
-                        }];
- */
 
 
 
 
-#import <Foundation/Foundation.h>
+
 // 缓存路径
 #define ILCachePath [NSTemporaryDirectory() stringByAppendingPathComponent:@"ILImgCache"]
 // 图片下载超时
 #define ILTimeOut 8
 
+
+#import <Foundation/Foundation.h>
+
 typedef void (^ImgCallBack)(UIImage *img);
+
+typedef void (^LoadFinish)(UIImage *img);
+typedef void (^LoadFailure)();
 @interface ImageLoader : NSObject
 
 /*!
- *  异步加载图片
+ *  异步加载图片,可设置placeholder,请求时自动将placeholder回调block
  *
  *  @param url         图片URL,该方法会进行一次utf-8编码
  *  @param placeholder 占位图,该图片会在请请求时block返回
  *  @param blk         callback回传一个image对象
  *
- *  @since 2014-07-11
+ *  @since 2014-07-11(老方法)
  */
 + (void)getImageWithURL:(NSString*)url
             placeholder:(UIImage*)placeholder
                   block:(ImgCallBack)blk;
+
+
+/*!
+ *  异步加载图片,常规方式,带成功失败block回调,没有设置placeholder,因为你可以在调用前自行赋值.
+ *
+ *  @param url         图片URL,该方法会进行一次utf-8编码
+ *  @param finish      成功block回调,会回传一个UIImage对象.
+ *  @param failure     失败block回调
+ *
+ *  @since 2014-07-14(增加新方法)
+ */
+
++ (void)getImageWithURL:(NSString*)url
+             loadFinish:(LoadFinish)finish
+            loadFailure:(LoadFailure)failure;
+
 
 
 
