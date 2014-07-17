@@ -14,6 +14,8 @@
 #define ILCachePath [NSTemporaryDirectory() stringByAppendingPathComponent:@"ILImgCache"]
 // 图片下载超时
 #define ILTimeOut 8
+// 缓存图片过期时间
+#define ILExpiredTime 60*60*24*7 //a week
 
 
 #import <Foundation/Foundation.h>
@@ -56,7 +58,7 @@ typedef void (^LoadFailure)();
 
 
 /*!
- *  删除所有缓存图片
+ *  删除所有缓存图片,调用之后会删除宏定义"ILCachePath"文件夹
  *
  *  @return 是否删除成功
  *
@@ -65,6 +67,15 @@ typedef void (^LoadFailure)();
 + (BOOL)deleteCacheImage;
 
 
+/*!
+ *  检查是否过期,过期则清除图片缓存,过期日期默认7天,通过改变宏定义"ILExpiredTime"来改变过期时长
+ *  - (void)applicationWillTerminate:(UIApplication*)application
+ *  {
+ *      [ImageLoader cleanCacheIfExpired];
+ *  }
+ *  @since 2014-07-17
+ */
++ (void)cleanCacheIfExpired;
 
 
 

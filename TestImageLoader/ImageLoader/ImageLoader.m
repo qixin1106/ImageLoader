@@ -18,6 +18,23 @@
 
 @implementation ImageLoader
 
+#pragma mark - 检查是否过期,过期则清除缓存图片
++ (void)cleanCacheIfExpired
+{
+    NSDirectoryEnumerator *fileNames = [[NSFileManager defaultManager] enumeratorAtPath:ILCachePath];
+    NSInteger curTimetemp = (NSInteger)CFAbsoluteTimeGetCurrent();
+    for (NSString *fileName in fileNames)
+    {
+        NSString *uniquePath = [ILCachePath stringByAppendingPathComponent:fileName];
+        NSDictionary* attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:uniquePath error:nil];
+        NSDate *createdDate = [attributes objectForKey:NSFileCreationDate];
+        NSInteger createTimetemp = (NSInteger)[createdDate timeIntervalSinceReferenceDate];
+        if (curTimetemp-createTimetemp > ILExpiredTime)
+        {
+            [[NSFileManager defaultManager] removeItemAtPath:uniquePath error:nil];
+        }
+    }
+}
 
 
 #pragma mark - 清除GMImgCache缓存的图片

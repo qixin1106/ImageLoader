@@ -79,5 +79,10 @@
     return YES;
 }
 
+- (void)applicationWillTerminate:(UIApplication*)application
+{
+    [ImageLoader cleanCacheIfExpired];
+}
+
 
 @end
